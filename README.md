@@ -1,3 +1,4 @@
+
 # Smart Face Recognition Attendance System
 
 A complete face recognition-based attendance system with anti-spoofing capabilities using blink detection. The system includes multiple frontend interfaces integrated with a powerful backend.
@@ -416,3 +417,6 @@ For issues or questions:
 - ✅ Documentation: Comprehensive
 
 Enjoy using the Smart Face Recognition Attendance System! 🎓
+=======
+# Attendence-Facial-recognised
+>>>>>>> 5c1bebd659ef37a55bba078a9b1b15431b69b80c
