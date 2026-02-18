@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Smart Face Attendance</title>
+  <style>
+    body { font-family: Arial; padding:20px; }
+    video { border-radius:10px; }
+    button { margin:5px; padding:8px 12px; }
+    #log { background:#f4f4f4; padding:10px; margin-top:10px; }
+  </style>
+</head>
+<body>
+
+<h2>Smart Face Recognition Attendance</h2>
+
+<video id="video" width="640" height="480" autoplay></video>
+<canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
+
+<br>
+
+<input id="name" placeholder="Name">
+<input id="roll" placeholder="Roll Number">
+
+<br>
+
+<button onclick="captureOne()">Capture Image</button>
+<button onclick="trainAll()">Train Encodings</button>
+<button onclick="takeAttendance()">Take Attendance</button>
+
+<div id="log">Logs...</div>
+
+<script>
+const video = document.getElementById('video');
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const logBox = document.getElementById('log');
+
+function log(msg){
+  logBox.innerHTML = new Date().toLocaleTimeString() + " - " + msg + "<br>" + logBox.innerHTML;
+}
+
+navigator.mediaDevices.getUserMedia({video:true})
+.then(stream => video.srcObject = stream)
+.catch(err => log("Camera error: " + err));
+
+function captureImage(){
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  return canvas.toDataURL("image/jpeg");
+}
+
+async function captureOne(){
+  const name = document.getElementById('name').value;
+  const roll = document.getElementById('roll').value;
+  const image = captureImage();
+
+  const res = await fetch('/api/register/capture-frame', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({name:name, roll_number:roll, image:image})
+  });
+
+  const data = await res.json();
+  log(JSON.stringify(data));
+}
+
+async function trainAll(){
+  const res = await fetch('/api/train/encodings', {method:'POST'});
+  const data = await res.json();
+  log(JSON.stringify(data));
+}
+
+async function takeAttendance(){
+  const image = captureImage();
+  const res = await fetch('/api/attendance/recognize', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({image:image})
+  });
+  const data = await res.json();
+  log(JSON.stringify(data));
+}
+</script>
+
+</body>
+</html>

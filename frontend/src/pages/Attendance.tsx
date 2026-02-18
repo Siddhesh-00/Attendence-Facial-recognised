@@ -22,11 +22,12 @@ const Attendance = () => {
     setStatusType("loading");
     setSessionActive(true);
 
-    const result = await start();
+    const result: any = await start();
     
     if (result && result.success) {
-      setMarkedStudents(result.marked_today || []);
-      setStatus(`✅ Session completed! ${result.marked_today?.length || 0} students marked.`);
+      // FIXED: Using result.students instead of result.marked_today
+      setMarkedStudents(result.students || []);
+      setStatus(`✅ Session completed! ${result.students?.length || 0} students marked.`);
       setStatusType("success");
       setTimeout(() => {
         setSessionActive(false);
